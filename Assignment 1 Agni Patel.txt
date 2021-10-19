@@ -1,0 +1,99 @@
+Query 1: Beers other than Hefeweizen which are served by Gecko Grill bar
+SELECT beer FROM Sells
+WHERE beer != 'Hefeweizen'
+AND bar = 'Gecko Grill';
+
+beer
+Budweiser
+
+
+
+Query 2: Drinkers  who like some beers which Justin also likes
+SELECT DISTINCT drinker FROM Likes 
+WHERE beer IN (SELECT beer FROM Likes WHERE drinker = "Justin");
+
+John
+Mike
+Justin
+
+
+
+Query 3: Pairs of drinkers and bars such that a drinker frequents the bar and the bar serves at least one beer which the drinker likes
+SELECT DISTINCT l.drinker, f.bar
+FROM Likes l, Frequents f, Sells s
+WHERE l.beer = s.beer AND f.bar = s.bar AND f.drinker = l.drinker;
+
+Mike A.P Stump's
+Jesse Blue Angel
+Mike Blue Angel
+John Cabana
+Mike Cabana
+John Caravan
+Justin Gecko Grill
+Mike The Shark and Rose
+Justin Caravan
+Justin Seven Bamboo
+
+
+
+Query 4: Bars which are frequented by Justin or Rebecca but not by both of them
+SELECT bar 
+FROM
+(SELECT * FROM Frequents f WHERE f.drinker = 'Justin'
+UNION 
+SELECT * FROM Frequents f WHERE f.drinker = 'Rebecca') drinkers
+WHERE drinkers.bar NOT IN (SELECT DISTINCT f.bar 
+FROM Frequents f, Frequents g 
+WHERE f.drinker = 'Justin' AND g.drinker = 'Rebecca' AND f.bar = g.bar);
+
+Caravan
+Seven Bamboo
+Coconut Willie's Cocktail Lounge
+
+
+
+Query 5: Drinkers who frequent bars which sell some beer that they like
+SELECT DISTINCT f.drinker FROM Frequents f, Likes l, Sells s 
+WHERE f.drinker = l.drinker AND l.beer = s.beer AND s.bar = f.bar;
+
+Mike
+Jesse
+John
+Justin
+
+
+
+Query 6: Bars which serve some beers which John or Rebecca like and which are cheaper than $5
+SELECT bar FROM Sells
+WHERE beer 
+IN (SELECT beer FROM Likes WHERE drinker IN ('John', 'Rebecca')) 
+AND price < 5;
+
+Club 175
+Coconut Willie's Cocktail Lounge
+Gecko Grill
+Giza Hookah Lounge
+Seven Bamboo
+The Backbeat
+The Shark and Rose
+
+
+
+Query 7: Drinkers who like both Hefeweizen and Killian's
+SELECT DISTINCT drinker 
+FROM Likes WHERE beer 
+IN("Hefeweizen", "Killian's");
+
+Joe
+Mike
+John
+
+
+
+Query 8: Bars with names containing "The"
+SELECT DISTINCT bar FROM Sells WHERE bar LIKE '%THE%'
+
+The B-Hive
+The Backbeat
+The Blank Club
+The Shark and Rose
